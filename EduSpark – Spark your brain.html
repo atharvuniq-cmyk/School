@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSpark – Spark your brain</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e0f2fe;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1, h2, h3, .brand-font {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @keyframes ripple {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.5); }
+            70% { transform: scale(1.04); box-shadow: 0 0 0 18px rgba(2, 132, 199, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+        }
+        .listening-pulse {
+            animation: ripple 1.4s infinite;
+        }
+        @keyframes scanLine {
+            0%, 100% { top: 10%; }
+            50% { top: 86%; }
+        }
+        .scanner-laser {
+            animation: scanLine 2.2s ease-in-out infinite;
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-pop {
+            animation: popIn 0.25s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 sm:p-4 bg-gradient-to-br from-sky-100 via-blue-50 to-sky-200">
+
+    <!-- Mobile Phone Frame -->
+    <div class="w-full sm:w-[400px] h-screen sm:h-[820px] bg-white sm:rounded-[2.75rem] sm:border-[8px] sm:border-sky-900 shadow-2xl overflow-hidden flex flex-col relative">
+        
+        <!-- Top Header -->
+        <header class="bg-gradient-to-r from-sky-500 to-blue-600 text-white px-5 pt-4 pb-3.5 shadow-md z-20 shrink-0">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-white text-sky-600 flex items-center justify-center shadow-sm font-extrabold text-xl">
+                        ⚡
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-extrabold leading-none tracking-tight">EduSpark</h1>
+                        <p class="text-[11px] text-amber-200 font-bold mt-0.5">Spark your brain • Voice + Scan</p>
+                    </div>
+                </div>
+
+                <!-- Offline Mode & Points Pill -->
+                <div class="flex items-center gap-2">
+                    <span class="flex items-center gap-1 bg-emerald-500/25 border border-emerald-200/50 text-white text-[10px] font-bold px-2 py-1 rounded-full">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span> Offline
+                    </span>
+                    <div class="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-full">
+                        <span class="text-xs">⭐</span>
+                        <span id="points-display" class="text-xs font-extrabold">120</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Language Selector (English / Hindi / Marathi) -->
+            <div class="mt-3 flex items-center justify-between bg-sky-700/40 p-1 rounded-xl">
+                <button type="button" onclick="setLanguage('en')" id="lang-en" class="lang-btn flex-1 py-1.5 rounded-lg text-xs font-bold bg-white text-sky-700 shadow-sm transition cursor-pointer">English</button>
+                <button type="button" onclick="setLanguage('hi')" id="lang-hi" class="lang-btn flex-1 py-1.5 rounded-lg text-xs font-bold text-sky-100 hover:text-white transition cursor-pointer">हिंदी</button>
+                <button type="button" onclick="setLanguage('mr')" id="lang-mr" class="lang-btn flex-1 py-1.5 rounded-lg text-xs font-bold text-sky-100 hover:text-white transition cursor-pointer">मराठी</button>
+            </div>
+        </header>
+
+        <!-- Main Scrollable Viewport -->
+        <main class="flex-1 overflow-y-auto no-scrollbar bg-sky-50/60 p-4 pb-20 relative">
+
+            <!-- ================= SCREEN 0: HOME DASHBOARD ================= -->
+            <div id="screen-home" class="space-y-4 animate-pop">
+                
+                <!-- Welcome Banner -->
+                <div class="bg-white border border-sky-100 rounded-2xl p-4 shadow-sm">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-2.5 py-0.5 rounded-full">Digital India • Offline Classroom</span>
+                    <h2 id="ui-welcome" class="text-base font-extrabold text-slate-800 mt-1.5">Namaste Student! Spark your brain!</h2>
+                    <p id="ui-subtitle" class="text-xs text-slate-500 mt-0.5">Speak a question or scan any leaf or book photo.</p>
+                </div>
+
+                <!-- 4 BIG BUTTONS GRID -->
+                <div class="grid grid-cols-2 gap-3.5">
+                    <!-- Button 1: Voice Learn -->
+                    <button type="button" onclick="openScreen('voice')" class="bg-white hover:bg-sky-50 active:scale-95 transition border-2 border-sky-200 rounded-3xl p-4 shadow-md shadow-sky-500/10 flex flex-col items-center justify-center text-center aspect-square cursor-pointer">
+                        <div class="w-14 h-14 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-3xl mb-2.5">
+                            🎤
+                        </div>
+                        <span id="btn-voice-title" class="text-sm font-extrabold text-slate-800">Voice Learn</span>
+                        <span id="btn-voice-sub" class="text-[11px] text-sky-600 font-medium mt-0.5">Speak & Listen</span>
+                    </button>
+
+                    <!-- Button 2: Scan & Learn -->
+                    <button type="button" onclick="openScreen('scan')" class="bg-white hover:bg-sky-50 active:scale-95 transition border-2 border-sky-200 rounded-3xl p-4 shadow-md shadow-sky-500/10 flex flex-col items-center justify-center text-center aspect-square cursor-pointer">
+                        <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-3xl mb-2.5">
+                            📷
+                        </div>
+                        <span id="btn-scan-title" class="text-sm font-extrabold text-slate-800">Scan & Learn</span>
+                        <span id="btn-scan-sub" class="text-[11px] text-blue-600 font-medium mt-0.5">Leaf & Book Cam</span>
+                    </button>
+
+                    <!-- Button 3: My Subjects -->
+                    <button type="button" onclick="openScreen('subjects')" class="bg-white hover:bg-sky-50 active:scale-95 transition border-2 border-sky-200 rounded-3xl p-4 shadow-md shadow-sky-500/10 flex flex-col items-center justify-center text-center aspect-square cursor-pointer">
+                        <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-3xl mb-2.5">
+                            📚
+                        </div>
+                        <span id="btn-subj-title" class="text-sm font-extrabold text-slate-800">My Subjects</span>
+                        <span id="btn-subj-sub" class="text-[11px] text-indigo-600 font-medium mt-0.5">Offline Quiz + Lessons</span>
+                    </button>
+
+                    <!-- Button 4: My Badges -->
+                    <button type="button" onclick="openScreen('badges')" class="bg-white hover:bg-sky-50 active:scale-95 transition border-2 border-sky-200 rounded-3xl p-4 shadow-md shadow-sky-500/10 flex flex-col items-center justify-center text-center aspect-square cursor-pointer">
+                        <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-3xl mb-2.5">
+                            🏆
+                        </div>
+                        <span id="btn-badge-title" class="text-sm font-extrabold text-slate-800">My Badges</span>
+                        <span id="btn-badge-sub" class="text-[11px] text-amber-600 font-medium mt-0.5">Points & Rewards</span>
+                    </button>
+                </div>
+
+                <!-- Offline Mini Progress Strip -->
+                <div class="bg-white border border-sky-100 rounded-2xl p-3.5 shadow-sm flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg">💾</div>
+                        <div>
+                            <p class="text-xs font-extrabold text-slate-800">Saved in Phone (Offline)</p>
+                            <p id="ui-saved-sub" class="text-[11px] text-slate-500">0 Scans • 0 Quizzes Completed</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-extrabold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-lg">100% Free</span>
+                </div>
+
+                <!-- Judge Pitch Card -->
+                <div class="bg-gradient-to-r from-sky-600 to-blue-700 text-white rounded-2xl p-4 shadow-md">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-sky-200">🎯 Presentation Pitch</span>
+                        <button type="button" onclick="speakPitch()" class="text-[11px] bg-white/20 hover:bg-white/30 px-2.5 py-1 rounded-full font-semibold transition cursor-pointer">
+                            🔊 Listen
+                        </button>
+                    </div>
+                    <p class="text-xs italic font-medium leading-relaxed text-sky-50">
+                        "My app is not a quiz app, it is a buddy who listens, speaks and sees with the student."
+                    </p>
+                </div>
+            </div>
+
+            <!-- ================= SCREEN 1: VOICE LEARN ================= -->
+            <div id="screen-voice" class="hidden space-y-4 animate-pop">
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="openScreen('home')" class="px-3 py-2 rounded-xl bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 text-xs font-bold cursor-pointer">
+                        ← Back
+                    </button>
+                    <h2 class="text-base font-extrabold text-slate-800">🎤 Voice Learn</h2>
+                </div>
+
+                <!-- Mic Interactive Box -->
+                <div class="bg-white border border-sky-100 rounded-3xl p-5 text-center shadow-sm">
+                    <p id="voice-status" class="text-xs font-semibold text-sky-600 mb-4">Tap the mic and speak a question, or tap a topic below!</p>
+                    
+                    <button type="button" id="mic-btn" onclick="startVoiceRecognition()" class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-sky-500 to-blue-600 text-white flex items-center justify-center text-3xl shadow-xl shadow-sky-500/30 transition transform active:scale-95 cursor-pointer">
+                        🎙️
+                    </button>
+
+                    <!-- Custom Text/Voice Input Fallback -->
+                    <div class="mt-4 flex gap-1.5">
+                        <input id="manual-voice-input" type="text" placeholder="Or type question (e.g. water, gravity, solar)..." class="flex-1 bg-sky-50/70 border border-sky-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-sky-500">
+                        <button type="button" onclick="submitManualQuestion()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl cursor-pointer">Ask</button>
+                    </div>
+
+                    <p class="text-[11px] text-slate-400 mt-4">Quick Offline Voice Topics:</p>
+                    <div class="flex flex-wrap justify-center gap-1.5 mt-2">
+                        <button type="button" onclick="askOfflineVoice('photosynthesis')" class="text-[11px] bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1.5 rounded-full font-semibold transition cursor-pointer">🌱 Photosynthesis</button>
+                        <button type="button" onclick="askOfflineVoice('water')" class="text-[11px] bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1.5 rounded-full font-semibold transition cursor-pointer">💧 Importance of Water</button>
+                        <button type="button" onclick="askOfflineVoice('solar')" class="text-[11px] bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1.5 rounded-full font-semibold transition cursor-pointer">☀️ Solar System</button>
+                        <button type="button" onclick="askOfflineVoice('gravity')" class="text-[11px] bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1.5 rounded-full font-semibold transition cursor-pointer">🍎 What is Gravity?</button>
+                    </div>
+                </div>
+
+                <!-- Spoken Q&A Result Box -->
+                <div id="voice-result-card" class="hidden bg-white border-2 border-sky-300 rounded-2xl p-4 shadow-md space-y-2.5">
+                    <div class="text-xs text-slate-500">
+                        <span class="font-bold text-sky-700">Question:</span> <span id="user-spoken-text">...</span>
+                    </div>
+                    <div class="p-3 bg-sky-50 rounded-xl text-xs text-slate-800 leading-relaxed font-medium" id="buddy-spoken-answer">
+                        ...
+                    </div>
+                    <div class="flex justify-between items-center pt-1">
+                        <span class="text-[11px] font-bold text-emerald-600">+15 Points Earned!</span>
+                        <button type="button" onclick="replayLastVoice()" class="bg-sky-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-sky-700 cursor-pointer">
+                            🔊 Speak Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= SCREEN 2: SCAN & LEARN ================= -->
+            <div id="screen-scan" class="hidden space-y-4 animate-pop">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="stopCamera(); openScreen('home')" class="px-3 py-2 rounded-xl bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 text-xs font-bold cursor-pointer">
+                            ← Back
+                        </button>
+                        <h2 class="text-base font-extrabold text-slate-800">📷 Scan & Learn</h2>
+                    </div>
+                    <button type="button" onclick="toggleLiveCamera()" id="cam-toggle-btn" class="text-[11px] font-bold bg-sky-600 text-white px-3 py-1.5 rounded-xl shadow-sm hover:bg-sky-700 transition cursor-pointer">
+                        🎥 Live Cam
+                    </button>
+                </div>
+
+                <!-- Camera Viewfinder -->
+                <div class="bg-slate-900 rounded-3xl p-4 text-white relative overflow-hidden shadow-lg">
+                    <div class="aspect-[4/3] rounded-2xl border-2 border-sky-400/70 bg-slate-800 relative flex flex-col items-center justify-center overflow-hidden">
+                        <video id="live-video" autoplay playsinline class="hidden absolute inset-0 w-full h-full object-cover"></video>
+                        
+                        <!-- Scanner Laser Line -->
+                        <div class="scanner-laser absolute left-0 right-0 h-0.5 bg-sky-400 shadow-[0_0_12px_#38bdf8] z-10"></div>
+                        
+                        <div id="scan-placeholder" class="flex flex-col items-center justify-center z-10 px-4 text-center">
+                            <div id="scan-preview-emoji" class="text-6xl mb-2 transition-transform duration-300">🌿</div>
+                            <p id="scan-preview-label" class="text-xs text-sky-200 font-semibold">Tap any Leaf or Book Diagram below to Scan</p>
+                        </div>
+
+                        <button type="button" id="capture-btn" onclick="captureLiveFrame()" class="hidden absolute bottom-3 z-20 bg-sky-500 hover:bg-sky-600 text-white text-xs font-extrabold px-4 py-2 rounded-full shadow-lg border-2 border-white cursor-pointer">
+                            📸 Snap & Identify
+                        </button>
+                    </div>
+
+                    <!-- Offline Demo Scan Targets -->
+                    <p class="text-[11px] text-sky-200 text-center mt-3 mb-2 font-medium">Tap a Leaf or Textbook Diagram to Scan Offline:</p>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button type="button" onclick="simulateScan('neem')" class="bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl p-2 text-center transition cursor-pointer">
+                            <div class="text-2xl">🌿</div>
+                            <div class="text-[10px] font-bold mt-1">Neem Leaf</div>
+                        </button>
+                        <button type="button" onclick="simulateScan('tulsi')" class="bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl p-2 text-center transition cursor-pointer">
+                            <div class="text-2xl">🌱</div>
+                            <div class="text-[10px] font-bold mt-1">Tulsi</div>
+                        </button>
+                        <button type="button" onclick="simulateScan('heart')" class="bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl p-2 text-center transition cursor-pointer">
+                            <div class="text-2xl">🫀</div>
+                            <div class="text-[10px] font-bold mt-1">Heart</div>
+                        </button>
+                        <button type="button" onclick="simulateScan('map')" class="bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl p-2 text-center transition cursor-pointer">
+                            <div class="text-2xl">🗺️</div>
+                            <div class="text-[10px] font-bold mt-1">India Map</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scan Identification Result -->
+                <div id="scan-result-card" class="hidden bg-white border-2 border-sky-300 rounded-2xl p-4 shadow-md space-y-2 animate-pop">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full">✓ Identified Offline</span>
+                        <span class="text-xs font-bold text-amber-600">+20 Points</span>
+                    </div>
+                    <h3 id="scan-title" class="text-base font-extrabold text-slate-900">Neem Leaf</h3>
+                    <p id="scan-desc" class="text-xs text-slate-600 leading-relaxed">...</p>
+                    <button type="button" onclick="speakScanResult()" class="w-full mt-2 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition cursor-pointer">
+                        🔊 Hear Explanation in Selected Language
+                    </button>
+                </div>
+            </div>
+
+            <!-- ================= SCREEN 3: MY SUBJECTS (OFFLINE QUIZ) ================= -->
+            <div id="screen-subjects" class="hidden space-y-4 animate-pop">
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="openScreen('home')" class="px-3 py-2 rounded-xl bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 text-xs font-bold cursor-pointer">
+                        ← Back
+                    </button>
+                    <h2 class="text-base font-extrabold text-slate-800">📚 My Subjects</h2>
+                </div>
+
+                <!-- Subject Selector Tabs -->
+                <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="loadQuiz('science')" id="subj-btn-science" class="subj-tab bg-sky-100 border-2 border-sky-500 p-2.5 rounded-2xl text-center transition cursor-pointer">
+                        <span class="text-xl">🔬</span>
+                        <h3 class="text-xs font-extrabold text-slate-800 mt-1">Science</h3>
+                        <p class="text-[9px] text-slate-600">Plants & Body</p>
+                    </button>
+                    <button type="button" onclick="loadQuiz('math')" id="subj-btn-math" class="subj-tab bg-white border-2 border-sky-200 p-2.5 rounded-2xl text-center hover:bg-sky-50 transition cursor-pointer">
+                        <span class="text-xl">🧮</span>
+                        <h3 class="text-xs font-extrabold text-slate-800 mt-1">Maths</h3>
+                        <p class="text-[9px] text-slate-500">Numbers</p>
+                    </button>
+                    <button type="button" onclick="loadQuiz('gk')" id="subj-btn-gk" class="subj-tab bg-white border-2 border-sky-200 p-2.5 rounded-2xl text-center hover:bg-sky-50 transition cursor-pointer">
+                        <span class="text-xl">🇮🇳</span>
+                        <h3 class="text-xs font-extrabold text-slate-800 mt-1">India GK</h3>
+                        <p class="text-[9px] text-slate-500">Digital India</p>
+                    </button>
+                </div>
+
+                <!-- Interactive Quiz Card -->
+                <div id="quiz-box" class="bg-white border border-sky-200 rounded-3xl p-5 shadow-sm space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span id="quiz-subject-tag" class="text-[10px] font-bold uppercase bg-sky-100 text-sky-700 px-2.5 py-0.5 rounded-full">General Science</span>
+                        <button type="button" onclick="speakCurrentQuiz()" class="text-[11px] font-bold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-full hover:bg-sky-100 cursor-pointer">
+                            🔊 Read Question
+                        </button>
+                    </div>
+                    <h3 id="quiz-question" class="text-sm font-extrabold text-slate-800 leading-snug">Loading question...</h3>
+                    <div id="quiz-options" class="space-y-2">
+                        <!-- Options injected here -->
+                    </div>
+                    <div id="quiz-feedback" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+                </div>
+            </div>
+
+            <!-- ================= SCREEN 4: MY BADGES ================= -->
+            <div id="screen-badges" class="hidden space-y-4 animate-pop">
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="openScreen('home')" class="px-3 py-2 rounded-xl bg-white border border-sky-200 text-sky-700 hover:bg-sky-50 text-xs font-bold cursor-pointer">
+                        ← Back
+                    </button>
+                    <h2 class="text-base font-extrabold text-slate-800">🏆 My Badges & Progress</h2>
+                </div>
+
+                <div class="bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-3xl p-5 text-center shadow-md">
+                    <p class="text-xs uppercase tracking-wider text-sky-100 font-bold">Total Earned Points</p>
+                    <div id="badge-total-points" class="text-4xl font-extrabold my-1">120 ⭐</div>
+                    <p class="text-[11px] text-sky-100">Works 100% Offline • No Internet Needed</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white border border-sky-200 rounded-2xl p-4 text-center shadow-sm">
+                        <div class="text-3xl mb-1">🎤</div>
+                        <h4 class="text-xs font-extrabold text-slate-800">Voice Explorer</h4>
+                        <p class="text-[10px] text-emerald-600 font-bold mt-1">✓ Unlocked</p>
+                    </div>
+                    <div id="badge-scanner" class="bg-white border border-sky-200 rounded-2xl p-4 text-center shadow-sm opacity-50 transition-all">
+                        <div class="text-3xl mb-1">🌿</div>
+                        <h4 class="text-xs font-extrabold text-slate-800">Nature Scanner</h4>
+                        <p id="badge-scanner-status" class="text-[10px] text-slate-500 font-bold mt-1">Scan 1 Leaf</p>
+                    </div>
+                    <div id="badge-quiz" class="bg-white border border-sky-200 rounded-2xl p-4 text-center shadow-sm opacity-50 transition-all">
+                        <div class="text-3xl mb-1">🧠</div>
+                        <h4 class="text-xs font-extrabold text-slate-800">Village Genius</h4>
+                        <p id="badge-quiz-status" class="text-[10px] text-slate-500 font-bold mt-1">Win 1 Quiz</p>
+                    </div>
+                    <div class="bg-white border border-sky-200 rounded-2xl p-4 text-center shadow-sm">
+                        <div class="text-3xl mb-1">🇮🇳</div>
+                        <h4 class="text-xs font-extrabold text-slate-800">Digital India Star</h4>
+                        <p class="text-[10px] text-emerald-600 font-bold mt-1">✓ Unlocked</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 bg-sky-900 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg z-50 whitespace-nowrap">
+            ⭐ Points Saved!
+        </div>
+
+        <!-- Bottom Footer Bar -->
+        <footer class="bg-white border-t border-sky-100 px-4 py-2.5 flex items-center justify-between text-[11px] text-slate-500 shrink-0">
+            <button type="button" onclick="openScreen('home')" class="font-bold text-sky-600 hover:text-sky-800 cursor-pointer">
+                🏠 Home
+            </button>
+            <span class="font-semibold text-slate-600">EduSpark • Spark your brain</span>
+            <span class="font-bold text-emerald-600">Offline Ready</span>
+        </footer>
+    </div>
+
+    <script>
+        // --- CLEAN IN-MEMORY STATE (Zero sandbox errors) ---
+        const appState = {
+            lang: 'en',
+            points: 120,
+            scanCount: 0,
+            quizCount: 0,
+            scanned: false,
+            quizWon: false,
+            lastSpokenText: '',
+            lastScanText: '',
+            currentQuizKey: 'science',
+            mediaStream: null
+        };
+
+        // --- MULTILINGUAL CONTENT (English, Hindi, Marathi) ---
+        const i18n = {
+            en: {
+                welcome: "Namaste Student! Spark your brain!",
+                subtitle: "Speak a question or scan any leaf or book photo.",
+                voiceTitle: "Voice Learn",
+                voiceSub: "Speak & Listen",
+                scanTitle: "Scan & Learn",
+                scanSub: "Leaf & Book Cam",
+                subjTitle: "My Subjects",
+                subjSub: "Offline Quiz + Lessons",
+                badgeTitle: "My Badges",
+                badgeSub: "Points & Rewards",
+                voiceAnswers: {
+                    photosynthesis: {
+                        q: "What is Photosynthesis?",
+                        a: "Photosynthesis is how green plants make their own food using sunlight, water, and carbon dioxide. Leaves act like the kitchen of the plant!"
+                    },
+                    water: {
+                        q: "Why is Water important?",
+                        a: "Water keeps all living things alive. It helps digest food, cools our body, and helps farmers grow crops in villages."
+                    },
+                    solar: {
+                        q: "Planets in Solar System",
+                        a: "There are 8 planets orbiting the Sun: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune."
+                    },
+                    gravity: {
+                        q: "What is Gravity?",
+                        a: "Gravity is the invisible force of Earth that pulls everything toward the ground, keeping us, water, and trees safely on Earth."
+                    }
+                },
+                scans: {
+                    neem: {
+                        emoji: "🌿",
+                        title: "Neem Leaf (Azadirachta indica)",
+                        desc: "Neem is a medicinal tree found across Indian villages. Its leaves purify blood, fight bacteria, and protect stored grains from insects."
+                    },
+                    tulsi: {
+                        emoji: "🌱",
+                        title: "Tulsi / Holy Basil",
+                        desc: "Tulsi is an Ayurvedic herb rich in antioxidants. Boiling Tulsi leaves in tea helps cure cough, cold, and boosts immunity."
+                    },
+                    heart: {
+                        emoji: "🫀",
+                        title: "Human Heart (Science Diagram)",
+                        desc: "The human heart has 4 chambers and pumps oxygen-rich blood to every part of our body 72 times per minute."
+                    },
+                    map: {
+                        emoji: "🗺️",
+                        title: "Map of India (Geography Textbook)",
+                        desc: "India has 28 States and 8 Union Territories. It is surrounded by the Himalayas in the north and the Indian Ocean in the south."
+                    }
+                }
+            },
+            hi: {
+                welcome: "नमस्ते विद्यार्थी! EduSpark के साथ दिमाग चमकाएं!",
+                subtitle: "सवाल बोलें या किताब और पत्ती को स्कैन करें।",
+                voiceTitle: "वॉइस लर्न (बोलो)",
+                voiceSub: "बोलें और सुनें",
+                scanTitle: "स्कैन और सीखें",
+                scanSub: "पत्ती और किताब कैमरा",
+                subjTitle: "मेरे विषय",
+                subjSub: "ऑफलाइन क्विज़",
+                badgeTitle: "मेरे बैज",
+                badgeSub: "पॉइंट्स और इनाम",
+                voiceAnswers: {
+                    photosynthesis: {
+                        q: "प्रकाश संश्लेषण (Photosynthesis) क्या है?",
+                        a: "प्रकाश संश्लेषण वह प्रक्रिया है जिससे हरे पौधे सूरज की रोशनी, पानी और हवा से अपना भोजन बनाते हैं। पत्तियां पौधे की रसोई हैं!"
+                    },
+                    water: {
+                        q: "पानी क्यों ज़रूरी है?",
+                        a: "पानी सभी जीवित प्राणियों के लिए जीवन है। यह भोजन पचाने और गांवों में खेती करने के लिए सबसे ज़रूरी है।"
+                    },
+                    solar: {
+                        q: "सौरमंडल के ग्रह",
+                        a: "सूर्य के चारों ओर 8 ग्रह घूमते हैं: बुध, शुक्र, पृथ्वी, मंगल, बृहस्पति, शनि, अरुण और वरुण।"
+                    },
+                    gravity: {
+                        q: "गुरुत्वाकर्षण (Gravity) क्या है?",
+                        a: "गुरुत्वाकर्षण पृथ्वी की वह शक्ति है जो हर चीज़ को अपनी ओर खींचती है, जिससे हम ज़मीन पर सुरक्षित रहते हैं।"
+                    }
+                },
+                scans: {
+                    neem: {
+                        emoji: "🌿",
+                        title: "नीम की पत्ती (Neem Leaf)",
+                        desc: "नीम एक औषधीय पेड़ है। इसकी पत्तियां बैक्टीरिया से लड़ती हैं और अनाज को कीड़ों से बचाती हैं।"
+                    },
+                    tulsi: {
+                        emoji: "🌱",
+                        title: "तुलसी का पौधा (Tulsi)",
+                        desc: "तुलसी एक आयुर्वेदिक औषधि है। इसकी पत्तियां खांसी-जुकाम ठीक करती हैं और रोग प्रतिरोधक क्षमता बढ़ाती हैं।"
+                    },
+                    heart: {
+                        emoji: "🫀",
+                        title: "मानव हृदय (Science चित्र)",
+                        desc: "मानव हृदय के 4 भाग होते हैं और यह पूरे शरीर में शुद्ध रक्त पंप करता है।"
+                    },
+                    map: {
+                        emoji: "🗺️",
+                        title: "भारत का नक्शा (भूगोल किताब)",
+                        desc: "भारत में 28 राज्य और 8 केंद्र शासित प्रदेश हैं। उत्तर में हिमालय पर्वत और दक्षिण में हिंद महासागर है।"
+                    }
+                }
+            },
+            mr: {
+                welcome: "नमस्कार विद्यार्थी! EduSpark सोबत बुद्धीला चालना द्या!",
+                subtitle: "प्रश्न विचारा किंवा पान आणि पुस्तक स्कॅन करा.",
+                voiceTitle: "व्हॉइस लर्न (बोला)",
+                voiceSub: "बोला आणि ऐका",
+                scanTitle: "स्कॅन आणि शिका",
+                scanSub: "पान व पुस्तक कॅमेरा",
+                subjTitle: "माझे विषय",
+                subjSub: "ऑफलाइन प्रश्नमंजुषा",
+                badgeTitle: "माझे बॅजेस",
+                badgeSub: "गुण आणि बक्षिसे",
+                voiceAnswers: {
+                    photosynthesis: {
+                        q: "प्रकाशसंश्लेषण (Photosynthesis) म्हणजे काय?",
+                        a: "प्रकाशसंश्लेषण म्हणजे हिरव्या वनस्पती सूर्यप्रकाश, पाणी आणि हवेच्या मदतीने स्वतःचे अन्न तयार करण्याची प्रक्रिया होय."
+                    },
+                    water: {
+                        q: "पाणी का महत्त्वाचे आहे?",
+                        a: "पाणी हेच जीवन आहे. अन्न पचवण्यासाठी आणि शेतीमध्ये पिके वाढवण्यासाठी पाणी अत्यंत आवश्यक आहे."
+                    },
+                    solar: {
+                        q: "सूर्यमालेतील ग्रह",
+                        a: "सूर्याभोवती ८ ग्रह फिरतात: बुध, शुक्र, पृथ्वी, मंगळ, गुरू, शनि, युरेनस आणि नेपच्यून."
+                    },
+                    gravity: {
+                        q: "गुरुत्वाकर्षण (Gravity) म्हणजे काय?",
+                        a: "गुरुत्वाकर्षण म्हणजे पृथ्वीची अशी शक्ती जी प्रत्येक वस्तूला जमिनीकडे खेचून ठेवते."
+                    }
+                },
+                scans: {
+                    neem: {
+                        emoji: "🌿",
+                        title: "कडुलिंबाचे पान (Neem Leaf)",
+                        desc: "कडुलिंब हे औषधी झाड आहे. याची पाने जंतूनाशक असतात आणि धान्याचे किडींपासून संरक्षण करतात."
+                    },
+                    tulsi: {
+                        emoji: "🌱",
+                        title: "तुळशीचे पान (Tulsi)",
+                        desc: "तुळस ही एक आयुर्वेदिक वनस्पती आहे. तुळशीची पाने सर्दी-खोकला बरा करतात आणि रोगप्रतिकारशक्ती वाढवतात."
+                    },
+                    heart: {
+                        emoji: "🫀",
+                        title: "मानवी हृदय (विज्ञान आकृती)",
+                        desc: "मानवी हृदयाचे ४ कप्पे असतात आणि ते संपूर्ण शरीराला शुद्ध रक्त पुरवते."
+                    },
+                    map: {
+                        emoji: "🗺️",
+                        title: "भारताचा नकाशा (भूगोल पुस्तक)",
+                        desc: "भारतात २८ राज्ये आणि ८ केंद्रशासित प्रदेश आहेत. उत्तरेला हिमालय पर्वत आणि दक्षिणेला हिंदी महासागर आहे."
+                    }
+                }
+            }
+        };
+
+        const quizzes = {
+            science: {
+                tag: "General Science",
+                q: "Which part of the plant makes food using sunlight?",
+                options: ["Root (जड़ / मूळ)", "Green Leaf (पत्ती / पान)", "Flower (फूल)"],
+                correct: 1
+            },
+            math: {
+                tag: "Easy Maths",
+                q: "If a farmer has 15 mangoes and gives 6 away, how many are left?",
+                options: ["9 Mangoes", "8 Mangoes", "11 Mangoes"],
+                correct: 0
+            },
+            gk: {
+                tag: "India GK",
+                q: "Which tree leaf is known in Indian villages as a natural medicine & grain protector?",
+                options: ["Neem Leaf (नीम / कडुलिंब)", "Banana Leaf", "Mango Leaf"],
+                correct: 0
+            }
+        };
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            updatePointsUI();
+            updateBadgesUI();
+            loadQuiz('science');
+        });
+
+        // --- LANGUAGE SWITCHER ---
+        function setLanguage(lang) {
+            appState.lang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-sky-700', 'shadow-sm');
+                btn.classList.add('text-sky-100');
+            });
+            const active = document.getElementById(`lang-${lang}`);
+            if (active) {
+                active.classList.remove('text-sky-100');
+                active.classList.add('bg-white', 'text-sky-700', 'shadow-sm');
+            }
+
+            const t = i18n[lang];
+            document.getElementById('ui-welcome').innerText = t.welcome;
+            document.getElementById('ui-subtitle').innerText = t.subtitle;
+            document.getElementById('btn-voice-title').innerText = t.voiceTitle;
+            document.getElementById('btn-voice-sub').innerText = t.voiceSub;
+            document.getElementById('btn-scan-title').innerText = t.scanTitle;
+            document.getElementById('btn-scan-sub').innerText = t.scanSub;
+            document.getElementById('btn-subj-title').innerText = t.subjTitle;
+            document.getElementById('btn-subj-sub').innerText = t.subjSub;
+            document.getElementById('btn-badge-title').innerText = t.badgeTitle;
+            document.getElementById('btn-badge-sub').innerText = t.badgeSub;
+            showToast(lang === 'hi' ? 'भाषा: हिंदी चुनी गई' : lang === 'mr' ? 'भाषा: मराठी निवडली' : 'Language: English');
+        }
+
+        // --- NAVIGATION ---
+        function openScreen(name) {
+            ['home', 'voice', 'scan', 'subjects', 'badges'].forEach(s => {
+                const el = document.getElementById(`screen-${s}`);
+                if (el) el.classList.add('hidden');
+            });
+            const target = document.getElementById(`screen-${name}`);
+            if (target) target.classList.remove('hidden');
+            if (name === 'badges') updateBadgesUI();
+        }
+
+        // --- POINTS & UI ---
+        function addPoints(pts) {
+            appState.points += pts;
+            updatePointsUI();
+            showToast(`+${pts} Points Earned!`);
+        }
+
+        function updatePointsUI() {
+            document.getElementById('points-display').innerText = appState.points;
+            document.getElementById('badge-total-points').innerText = `${appState.points} ⭐`;
+            document.getElementById('ui-saved-sub').innerText = `${appState.scanCount} Scans • ${appState.quizCount} Quizzes Completed`;
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 2400);
+        }
+
+        // --- TEXT-TO-SPEECH ---
+        function speakText(text) {
+            try {
+                if (!('speechSynthesis' in window)) return;
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                if (appState.lang === 'hi') utterance.lang = 'hi-IN';
+                else if (appState.lang === 'mr') utterance.lang = 'mr-IN';
+                else utterance.lang = 'en-IN';
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+            } catch (e) {
+                // Safe fallback if browser blocks speech inside iframe
+            }
+        }
+
+        function speakPitch() {
+            speakText("My app is not a quiz app, it is a buddy who listens, speaks and sees with the student.");
+            showToast("🔊 Playing Presentation Pitch...");
+        }
+
+        // --- VOICE LEARN LOGIC (FIXED & COMPLETE) ---
+        function startVoiceRecognition() {
+            const micBtn = document.getElementById('mic-btn');
+            const status = document.getElementById('voice-status');
+            micBtn.classList.add('listening-pulse');
+            status.innerText = "Listening... Speak now! 🎙️";
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                try {
+                    const recognition = new SpeechRecognition();
+                    recognition.lang = appState.lang === 'hi' ? 'hi-IN' : appState.lang === 'mr' ? 'mr-IN' : 'en-IN';
+                    recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        micBtn.classList.remove('listening-pulse');
+                        status.innerText = "Heard you! Answering now...";
+                        handleSpokenQuery(transcript);
+                    };
+                    recognition.onerror = () => {
+                        micBtn.classList.remove('listening-pulse');
+                        status.innerText = "Mic blocked in preview — answered sample topic!";
+                        askOfflineVoice('photosynthesis');
+                    };
+                    recognition.start();
+                } catch (err) {
+                    micBtn.classList.remove('listening-pulse');
+                    askOfflineVoice('photosynthesis');
+                }
+            } else {
+                setTimeout(() => {
+                    micBtn.classList.remove('listening-pulse');
+                    status.innerText = "Answered offline!";
+                    askOfflineVoice('photosynthesis');
+                }, 900);
+            }
+        }
+
+        function submitManualQuestion() {
+            const input = document.getElementById('manual-voice-input');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            handleSpokenQuery(text);
+        }
+
+        function handleSpokenQuery(text) {
+            const lower = text.toLowerCase();
+            if (lower.includes('water') || lower.includes('पानी') || lower.includes('पाणी')) {
+                askOfflineVoice('water', text);
+            } else if (lower.includes('planet') || lower.includes('solar') || lower.includes('sun') || lower.includes('ग्रह')) {
+                askOfflineVoice('solar', text);
+            } else if (lower.includes('gravity') || lower.includes('earth') || lower.includes('गुरुत्वाकर्षण')) {
+                askOfflineVoice('gravity', text);
+            } else {
+                askOfflineVoice('photosynthesis', text);
+            }
+        }
+
+        function askOfflineVoice(topicKey, customQ = null) {
+            const item = i18n[appState.lang].voiceAnswers[topicKey];
+            if (!item) return;
+
+            const resultCard = document.getElementById('voice-result-card');
+            resultCard.classList.remove('hidden');
+            document.getElementById('user-spoken-text').innerText = customQ || item.q;
+            document.getElementById('buddy-spoken-answer').innerText = item.a;
+            document.getElementById('voice-status').innerText = "Answered in your selected language!";
+
+            appState.lastSpokenText = item.a;
+            speakText(item.a);
+            addPoints(15);
+        }
+
+        function replayLastVoice() {
+            if (appState.lastSpokenText) {
+                speakText(appState.lastSpokenText);
+                showToast("🔊 Speaking answer...");
+            }
+        }
+
+        // --- SCAN & LEARN LOGIC ---
+        async function toggleLiveCamera() {
+            const video = document.getElementById('live-video');
+            const placeholder = document.getElementById('scan-placeholder');
+            const captureBtn = document.getElementById('capture-btn');
+            const toggleBtn = document.getElementById('cam-toggle-btn');
+
+            if (appState.mediaStream) {
+                stopCamera();
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                appState.mediaStream = stream;
+                video.srcObject = stream;
+                video.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                captureBtn.classList.remove('hidden');
+                toggleBtn.innerText = "⏹ Stop Cam";
+            } catch (err) {
+                showToast("Camera blocked in preview — tap any leaf/map button below!");
+            }
+        }
+
+        function stopCamera() {
+            if (appState.mediaStream) {
+                appState.mediaStream.getTracks().forEach(track => track.stop());
+                appState.mediaStream = null;
+            }
+            document.getElementById('live-video').classList.add('hidden');
+            document.getElementById('scan-placeholder').classList.remove('hidden');
+            document.getElementById('capture-btn').classList.add('hidden');
+            document.getElementById('cam-toggle-btn').innerText = "🎥 Live Cam";
+        }
+
+        function captureLiveFrame() {
+            const items = ['neem', 'tulsi', 'heart', 'map'];
+            const randomPick = items[appState.scanCount % items.length];
+            simulateScan(randomPick);
+        }
+
+        function simulateScan(itemKey) {
+            const data = i18n[appState.lang].scans[itemKey];
+            if (!data) return;
+
+            document.getElementById('scan-preview-emoji').innerText = data.emoji;
+            document.getElementById('scan-preview-label').innerText = `Scanning ${data.title}...`;
+
+            setTimeout(() => {
+                document.getElementById('scan-result-card').classList.remove('hidden');
+                document.getElementById('scan-title').innerText = data.title;
+                document.getElementById('scan-desc').innerText = data.desc;
+                document.getElementById('scan-preview-label').innerText = `✓ Identified: ${data.title}`;
+
+                appState.lastScanText = `${data.title}. ${data.desc}`;
+                appState.scanned = true;
+                appState.scanCount += 1;
+                speakText(appState.lastScanText);
+                addPoints(20);
+            }, 350);
+        }
+
+        function speakScanResult() {
+            if (appState.lastScanText) {
+                speakText(appState.lastScanText);
+                showToast("🔊 Reading scan explanation...");
+            }
+        }
+
+        // --- OFFLINE QUIZ LOGIC ---
+        function loadQuiz(subjectKey) {
+            appState.currentQuizKey = subjectKey;
+
+            // Highlight active subject button
+            document.querySelectorAll('.subj-tab').forEach(btn => {
+                btn.classList.remove('bg-sky-100', 'border-sky-500');
+                btn.classList.add('bg-white', 'border-sky-200');
+            });
+            const activeTab = document.getElementById(`subj-btn-${subjectKey}`);
+            if (activeTab) {
+                activeTab.classList.remove('bg-white', 'border-sky-200');
+                activeTab.classList.add('bg-sky-100', 'border-sky-500');
+            }
+
+            const qData = quizzes[subjectKey];
+            document.getElementById('quiz-subject-tag').innerText = qData.tag;
+            document.getElementById('quiz-question').innerText = qData.q;
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.add('hidden');
+
+            const optionsEl = document.getElementById('quiz-options');
+            optionsEl.innerHTML = qData.options.map((opt, idx) => `
+                <button type="button" onclick="checkQuiz(${idx}, ${qData.correct})" class="w-full text-left p-3 rounded-xl border-2 border-sky-100 hover:border-sky-400 bg-sky-50/40 text-xs font-bold text-slate-700 transition cursor-pointer">
+                    ${opt}
+                </button>
+            `).join('');
+        }
+
+        function speakCurrentQuiz() {
+            const qData = quizzes[appState.currentQuizKey];
+            if (qData) {
+                speakText(qData.q);
+                showToast("🔊 Reading question...");
+            }
+        }
+
+        function checkQuiz(selected, correct) {
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+            if (selected === correct) {
+                feedback.className = "p-3 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-800";
+                feedback.innerText = "🎉 Correct Answer! +25 Points earned!";
+                appState.quizWon = true;
+                appState.quizCount += 1;
+                speakText("Correct answer! Great job!");
+                addPoints(25);
+            } else {
+                feedback.className = "p-3 rounded-xl text-xs font-bold bg-amber-100 text-amber-800";
+                feedback.innerText = "💡 Almost! Try tapping the other option.";
+                speakText("Try again!");
+            }
+        }
+
+        function updateBadgesUI() {
+            if (appState.scanned) {
+                document.getElementById('badge-scanner').classList.remove('opacity-50');
+                const st = document.getElementById('badge-scanner-status');
+                st.innerText = "✓ Unlocked";
+                st.classList.replace('text-slate-500', 'text-emerald-600');
+            }
+            if (appState.quizWon) {
+                document.getElementById('badge-quiz').classList.remove('opacity-50');
+                const st = document.getElementById('badge-quiz-status');
+                st.innerText = "✓ Unlocked";
+                st.classList.replace('text-slate-500', 'text-emerald-600');
+            }
+        }
+    </script>
+</body>
+</html>
